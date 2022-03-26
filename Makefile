@@ -1,6 +1,6 @@
 # Project settings
 PROJECT_NAME = sense-eh
-SOURCES = main.c sys.c systick.c uart.c i2c.c
+SOURCES = main.c sys.c systick.c uart.c i2c.c bmp180.c
 BUILD_DIR = build/
 
 OBJECTS = $(SOURCES:%.c=$(BUILD_DIR)%.o)

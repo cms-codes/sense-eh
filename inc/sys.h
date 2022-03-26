@@ -20,11 +20,6 @@
 #define PIN_USART2_TX GPIO2
 #define PIN_USART2_RX GPIO3
 
-/* BMP180 I2C */
-#define BMP_READ 0xEF
-#define BMP_WRITE 0xEE
-#define BMP_CMD_TEMP 0xF4
-
 /********* Sys_init *******
 *  Sets up clocks, pins, and peripherals.
 *   Inputs: none

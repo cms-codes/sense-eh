@@ -2,11 +2,10 @@
 
 volatile uint32_t systickCount = 0;
 
-// ******* Systick_init *******
-// Initializes the SysTick interrupt timer.
-//  Inputs: none
-// Outputs: none
-void Systick_init(void)
+/********* systick_init *******
+*  Initializes the SysTick interrupt timer.
+*/
+void systick_init(void)
 {
 	// 48MHz int osc
 	systick_set_clocksource(STK_CSR_CLKSOURCE_AHB);
@@ -20,21 +19,22 @@ void Systick_init(void)
 	systick_counter_enable();
 }
 
-// ******* Systick_timeGetCount *******
-// Returns the elapsed program time based on the count of SysTick interrupts.
-//  Inputs: none
-// Outputs: A count of elapsed cycles.
-uint32_t Systick_timeGetCount(void)
+/********* _systick_time_get_count *******
+*  Returns the elapsed program time based on the count of SysTick interrupts.
+*   Inputs: none
+*  Outputs: A count of elapsed cycles.
+*/
+uint32_t _systick_time_get_count(void)
 {
     return systickCount;
 }
 
-// ******* Systick_timeDelta *******
-// Provides the difference between two program times, as provided by 
-// Systick_get_time().
-//  Inputs: A start time and an end time.
-// Outputs: The delta between two points in execution time.
-uint32_t Systick_timeDelta( uint32_t start, uint32_t end )
+/********* _systick_time_delta *******
+*  Provides the difference between two program times
+*   Inputs: A start time and an end time.
+*  Outputs: The delta between two points in execution time.
+*/
+uint32_t _systick_time_delta( uint32_t start, uint32_t end )
 {
     uint32_t diff;
 
@@ -51,32 +51,31 @@ uint32_t Systick_timeDelta( uint32_t start, uint32_t end )
     return diff;
 }
 
-// ******* Systick_delayTicks *******
-// Delays execution for x ticks based on time reporting from 
-// Systick_get_time(). Scheduler event interrupt continues to fire.
-//  Inputs: Number of ticks to delay execution.
-// Outputs: none
-void Systick_delayTicks( uint32_t wait_ticks )
+/********* systick_delay_ticks *******
+*  Delays execution for x interrupts
+*   Inputs: Number of ticks to delay execution.
+*  Outputs: none
+*/
+void systick_delay_ticks( uint32_t wait_ticks )
 {
 	volatile uint32_t start, now, diff;
 
-	start = Systick_timeGetCount();
+	start = _systick_time_get_count();
 
 	do
 	{
 		__asm__ __volatile__ ("nop");
-		now = Systick_timeGetCount();
+		now = _systick_time_get_count();
 		
-        diff = Systick_timeDelta( start, now );
+        diff = _systick_time_delta( start, now );
 	}
 	while ( diff < wait_ticks );
 }
 
-// ******* sys_tick_handler *******
-// Predefined SysTick ISR function with libopencm3 prototype. Runs the event
-// manager and increments the counter.
-//  Inputs: none
-// Outputs: none
+/********* sys_tick_handler *******
+*  Predefined SysTick ISR function with libopencm3 prototype. Runs the event
+*  manager and increments the counter.
+*/
 void sys_tick_handler(void)
 {
 	//Sched_runEventManager();

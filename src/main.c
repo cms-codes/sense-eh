@@ -1,5 +1,4 @@
 #include <errno.h>
-#include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stddef.h>
@@ -15,6 +14,7 @@
 #include "systick.h"
 #include "uart.h"
 #include "i2c.h"
+#include "bmp180.h"
 
 
 int _write( int file, char *ptr, int len )
@@ -41,80 +41,47 @@ int _write( int file, char *ptr, int len )
 int main(void)
 {
 	
-	uint8_t callib_data[22] = {0};
-	uint8_t callib_cmd = 0xAA;
+	bmp_calib_data_t calib_data =
+	{
+		.AC1 = 0,
+		.AC2 = 0,
+		.AC3 = 0,
+		.AC4 = 0,
+		.AC5 = 0,
+		.AC6 = 0,
 
-	const uint8_t cmd[2] = { 0xf4, 0x2e };
-	uint8_t read_cmd;
-	uint8_t temp_raw[2] = {0};
-	uint16_t temp = 0;
+		.B1 = 0,
+		.B2 = 0,
+		.MB = 0,
+		.MC = 0,
+		.MD = 0,
 
-	int16_t AC1 = 0;
-	int16_t AC2 = 0;
-	int16_t AC3 = 0;
-	uint16_t AC4 = 0;
-	uint16_t AC5 = 0;
-	uint16_t AC6 = 0;
-
-	int16_t B1 = 0;
-	int16_t B2 = 0;
-	int16_t MB = 0;
-	int16_t MC = 0;
-	int16_t MD = 0;
-
-	int32_t X1 = 0;
-	int32_t X2 = 0;
-	int32_t B5 = 0;
-
-	int32_t temp_cal = 0;
-	float temp_disp = 0.0f;
+		.X1 = 0,
+		.X2 = 0,
+		.B5 = 0,
+	};
+	float temp = 0.0f;
 
 	Sys_init();
-	Systick_init();
+	systick_init();
+	_i2c_init();
 
-	Systick_delayTicks(500);
+	systick_delay_ticks(500);
 	printf("Hello, we're on the air...\n");
 
-	_i2c_init();
-	// get calibration data
-
-	i2c_transfer7( I2C1, 0x77, &callib_cmd, 1, callib_data, 22 );
-	Systick_delayTicks(25);
-
-	AC1 = ((callib_data[0] << 8) | callib_data[1]);
-	AC2 = ((callib_data[2] << 8) | callib_data[3]);
-	AC3 = ((callib_data[4] << 8) | callib_data[5]);
-	AC4 = ((callib_data[6] << 8) | callib_data[7]);
-	AC5 = ((callib_data[8] << 8) | callib_data[9]);
-	AC6 = ((callib_data[10] << 8) | callib_data[11]);
-	B1 = ((callib_data[12] << 8) | callib_data[13]);
-	B2 = ((callib_data[14] << 8) | callib_data[15]);
-	MB = ((callib_data[16] << 8) | callib_data[17]);
-	MC = ((callib_data[18] << 8) | callib_data[19]);
-	MD = ((callib_data[20] << 8) | callib_data[21]);
+	_bmp_get_calib_data(&calib_data);
 
 	while (1)
 	{
 
-		Systick_delayTicks(500);
+		systick_delay_ticks(500);
 
-		
-		i2c_transfer7( I2C1, 0x77, cmd, 2, NULL, 0 );
+		_bmp_get_calib_data(&calib_data);
+		temp = bmp_get_temp(&calib_data);
 		gpio_toggle( PORT_LED, PIN_LED );
-		Systick_delayTicks(25);
+		systick_delay_ticks(25);
 
-		read_cmd = 0xf6;
-		i2c_transfer7( I2C1, 0x77, &read_cmd, 1, temp_raw, 2 );
-
-		temp = ( temp_raw[0] << 8 ) + temp_raw[1];
-
-		X1 = ( (temp - AC6) * ( AC5 / ( pow(2,15) ) ) );
-		X2 = ( ( MC * ( pow(2,11) ) ) / (X1 + MD) );
-		B5 = X1 + X2;
-		temp_cal = (B5 + 8) / (pow(2,4));
-		temp_disp = temp_cal / 10.0;
-
-		printf( "Temp: %f\n", temp_disp );
+		printf( "Temp: %f\n", temp );
 		gpio_toggle( PORT_LED, PIN_LED );
 		
 	}

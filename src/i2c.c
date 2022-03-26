@@ -11,6 +11,5 @@ void _i2c_init(void)
 	i2c_set_7bit_addr_mode(I2C1);
 	i2c_peripheral_enable(I2C1);
 
-
-
 }
+
