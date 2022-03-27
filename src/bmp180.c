@@ -51,7 +51,8 @@ int16_t _bmp_get_temp_raw(void)
 
 /********* bmp_get_temp *******
 *  Sets up clocks, pins, and peripherals.
-*   Inputs: Uncalibrated temperature reading, device calibration struct.
+*   Inputs: Uncalibrated temperature reading, device calibration struct. See p. 15 of
+*           the BMP180 datasheet (April 2013).
 *  Outputs: Calibrated temperature.
 */
 float bmp_get_temp(const bmp_calib_data_t *calib_data)
