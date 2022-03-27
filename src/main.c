@@ -75,9 +75,9 @@ int main(void)
 	{
 
 		systick_delay_ticks(500);
-
-		_bmp_get_calib_data(&calib_data);
+		
 		temp = bmp_get_temp(&calib_data);
+		
 		gpio_toggle( PORT_LED, PIN_LED );
 		systick_delay_ticks(25);
 
