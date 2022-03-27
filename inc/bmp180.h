@@ -50,19 +50,34 @@ struct bmp_calib_data
 void _bmp_get_calib_data(bmp_calib_data_t *calib_data);
 
 /********* _bmp_get_temp_raw *******
-*  Sets up clocks, pins, and peripherals.
+*  Reads the uncalibrated temperature.
 *   Inputs: none
 *  Outputs: Raw 16 bit ADC reading from temperature sensor.
 */
 int16_t _bmp_get_temp_raw(void);
 
 /********* bmp_get_temp *******
-*  Sets up clocks, pins, and peripherals.
+*  Calibrated temperature reading (public function)
 *   Inputs: Uncalibrated temperature reading, device calibration struct. See p. 15 of
 *           the BMP180 datasheet (April 2013).
 *  Outputs: Calibrated temperature.
 */
 float bmp_get_temp(const bmp_calib_data_t *calib_data);
+
+/********* _bmp_get_press_raw *******
+*  Uncalibrated pressure reading.
+*   Inputs: none
+*  Outputs: Raw 16 bit ADC reading from temperature sensor.
+*/
+int32_t _bmp_get_press_raw(void);
+
+/********* bmp_get_press *******
+*  Calibrated presserature reading (public function)
+*   Inputs: Uncalibrated presserature reading, device calibration struct. See p. 15 of
+*           the BMP180 datasheet (April 2013).
+*  Outputs: Calibrated pressure in kilopascals.
+*/
+float bmp_get_press(const bmp_calib_data_t *calib_data);
 	
 
 #define BMP180_H 1
