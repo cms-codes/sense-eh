@@ -55,12 +55,9 @@ int main(void)
 		.MB = 0,
 		.MC = 0,
 		.MD = 0,
-
-		.X1 = 0,
-		.X2 = 0,
-		.B5 = 0,
 	};
-	float temp = 0.0f;
+	//float temp = 0.0f;
+	int32_t press = 0;
 
 	Sys_init();
 	systick_init();
@@ -76,12 +73,14 @@ int main(void)
 
 		systick_delay_ticks(500);
 		
-		temp = bmp_get_temp(&calib_data);
+		// must calibrate before each pressure reading
+		_bmp_get_calib_data(&calib_data);
+		press = bmp_get_press(&calib_data, 0);
 		
 		gpio_toggle( PORT_LED, PIN_LED );
 		systick_delay_ticks(25);
 
-		printf( "Temp: %f\n", temp );
+		printf( "Press: %ld\n", press );
 		gpio_toggle( PORT_LED, PIN_LED );
 		
 	}
