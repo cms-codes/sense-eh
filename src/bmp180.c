@@ -139,7 +139,7 @@ int32_t _bmp_get_press_raw(int oss)
 *   Inputs: Uncalibrated presserature reading, device calibration struct. See p. 15 of
 *           the BMP180 datasheet (April 2013), hardware oversampling oss
 *           (see _bmp_get_press_raw())
-*  Outputs: Calibrated pressure in kilopascals.
+*  Outputs: Calibrated absolute pressure in pascals.
 */
 int32_t bmp_get_press(const bmp_calib_data_t *calib_data, const int oss)
 {
@@ -182,7 +182,7 @@ int32_t bmp_get_press(const bmp_calib_data_t *calib_data, const int oss)
 	X2 = (-7357 * press) / pow(2, 16);
 	press = press + (X1 + X2 + 3791) / pow(2, 4);
 
-	// Absolute pressure relative to sea level
+	// Absolute pressure (relative to sea level)
 	return press; // return in Pa
 
 }
