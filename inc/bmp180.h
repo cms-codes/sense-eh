@@ -58,7 +58,7 @@ void _bmp_get_calib_data(bmp_calib_data_t *calib_data);
 * 
 *  0xf6: adc_out_msb
 *  0xf7: adc_out_lsb
-*  0x68: adc_out_xlsb
+*  0xf8: adc_out_xlsb
 * 
 */
 int16_t _bmp_get_temp_raw(void);
